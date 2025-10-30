@@ -24,5 +24,4 @@ This project includes the following features:
 
 ## Deployment
 
-Click [here](https://github.com/mpollock23/se_project_todo-app.git) to view this project on my on GitHub Page.
-
+Click [here](https://mpollock23.github.io/se_project_todo-app/) to view this project on my on GitHub Page.
