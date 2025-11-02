@@ -1,11 +1,12 @@
 import { initialTodos, validationConfig } from "../utils/constants.js";
 import { FormValidator } from "../components/FormValidator.js";
 import { Todo } from "../components/Todo.js";
+import { v4 as uuidv4 } from "https://jspm.dev/uuid";
 
 const addTodoButton = document.querySelector(".button_action_add");
 const addTodoPopup = document.querySelector("#add-todo-popup");
 const addTodoForm = addTodoPopup.querySelector(".popup__form");
-const addTodoCloseBtn = addTodoPopup.querySelector(".popup__close");
+const addTodoCloseButton = addTodoPopup.querySelector(".popup__close");
 const todoTemplate = document.querySelector("#todo-template");
 const todosList = document.querySelector(".todos__list");
 
@@ -21,12 +22,18 @@ addTodoButton.addEventListener("click", () => {
   openModal(addTodoPopup);
 });
 
-addTodoCloseBtn.addEventListener("click", () => {
+addTodoCloseButton.addEventListener("click", () => {
   closeModal(addTodoPopup);
 });
 
 const formValidator = new FormValidator(validationConfig, addTodoForm);
 formValidator.enableValidation();
+
+const renderTodo = (data, template) => {
+  const todo = new Todo(data, template);
+  const todoEl = todo.getView();
+  todosList.append(todoEl);
+}
 
 addTodoForm.addEventListener("submit", (evt) => {
   evt.preventDefault();
@@ -34,16 +41,13 @@ addTodoForm.addEventListener("submit", (evt) => {
   const dateInput = evt.target.date.value;
   const date = new Date(dateInput);
   date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
-  const values = { name, date };
-  const todo = new Todo(values, todoTemplate);
-  const todoEl = todo.getView();
-  todosList.append(todoEl);
+  const id = uuidv4();
+  const values = { name, date, id};
+  renderTodo(values, '#todo-template');
   closeModal(addTodoPopup);
   formValidator.resetValidation();
 });
 
 initialTodos.forEach((item) => {
-  const todo = new Todo(item, todoTemplate);
-  const todoEl = todo.getView();
-  todosList.append(todoEl);
+  renderTodo(item, '#todo-template');
 });

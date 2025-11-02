@@ -2,6 +2,8 @@ export class FormValidator {
   constructor(settings, element) {
     this._settings = settings;
     this._element = element;
+    this._inputList = Array.from(this._element.querySelectorAll(this._settings.inputSelector));
+    this._submitButton = this._element.querySelector(this._settings.submitButtonSelector);
   }
   _showInputError(inputElement, errorMessage) {
     const errorElementId = `#${inputElement.id}-error`;
@@ -25,18 +27,18 @@ export class FormValidator {
       this._hideInputError(inputElement);
     }
   }
-  _hasInvalidInput(inputList) {
-    return inputList.some((inputElement) => {
+  _hasInvalidInput() {
+    return this._inputList.some((inputElement) => {
       return !inputElement.validity.valid;
     });
   }
-  _toggleButtonState(inputList, buttonElement) {
-    if (this._hasInvalidInput(inputList)) {
-      buttonElement.classList.add(this._settings.inactiveButtonClass);
-      buttonElement.disabled = true;
+  _toggleButtonState() {
+    if (this._hasInvalidInput()) {
+      this._submitButton.classList.add(this._settings.inactiveButtonClass);
+      this._submitButton.disabled = true;
     } else {
-      buttonElement.classList.remove(this._settings.inactiveButtonClass);
-      buttonElement.disabled = false;
+      this._submitButton.classList.remove(this._settings.inactiveButtonClass);
+      this._submitButton.disabled = false;
     }
   }
   _setEventListeners() {
@@ -61,17 +63,10 @@ export class FormValidator {
     this._setEventListeners();
   }
   resetValidation() {
-    const inputList = Array.from(
-      this._element.querySelectorAll(this._settings.inputSelector)
-    );
-    inputList.forEach((inputElement) => {
-      inputElement.value = "";
+    this._element.reset();
+    this._inputList.forEach((inputElement) => {
       this._hideInputError(inputElement);
     });
-    const buttonElement = this._element.querySelector(
-      this._settings.submitButtonSelector
-    );
-    buttonElement.classList.add(this._settings.inactiveButtonClass);
-    buttonElement.disabled = true;
+    this._toggleButtonState()
   }
 }
