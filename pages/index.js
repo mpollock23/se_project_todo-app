@@ -13,10 +13,21 @@ const addTodoForm = document.querySelector(".popup__form");
 
 const todoCounter = new TodoCounter(initialTodos, ".counter__text");
 
+const handleCheck = (checked) => {
+  todoCounter.updateCompleted(checked);
+}
+
+const handleDelete = (wasCompleted) => {
+  todoCounter.updateTotal(false);
+  if (wasCompleted) {
+    todoCounter.updateCompleted(false);
+  }
+}
+
 const todoSection = new Section({
   items: initialTodos,
-  renderer: (items) => {
-    const todo = new Todo(items, "#todo-template", todoCounter);
+  renderer: (item) => {
+    const todo = new Todo(item, "#todo-template", handleCheck, handleDelete);
     todoSection.addItem(todo.getView());
   },
   containerSelector: ".todos__list",
@@ -29,7 +40,7 @@ const todoSubmit = new PopupWithForm("#add-todo-popup", (inputs) => {
   date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
   const id = uuidv4();
   const values = { name, date, id };
-  const todo = new Todo(values, "#todo-template", todoCounter);
+  const todo = new Todo(values, "#todo-template", handleCheck, handleDelete);
   todoSection.addItem(todo.getView());
   todoSubmit.close();
   formValidator.resetValidation();

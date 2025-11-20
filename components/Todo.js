@@ -1,8 +1,9 @@
 export class Todo {
-  constructor(data, selector, counter) {
+  constructor(data, selector, handleCheck, handleDelete) {
     this._data = data;
     this._selector = selector;
-    this._counter = counter;
+    this._handleCheck = handleCheck;
+    this._handleDelete = handleDelete;
   }
   _getTemplate() {
     const todoElement = document
@@ -37,21 +38,18 @@ export class Todo {
   _setEventListeners() {
     this._todoDeleteBtn.addEventListener("click", () => {
       this._element.remove();
-      if (this._data.completed) {
-        this._counter.updateCompleted(false);
-      }
-      this._counter.updateTotal(false);
+      this._handleDelete(this._data.completed);
     });
     this._todoCheckboxEl.addEventListener("click", () => {
-      this._toggleCheckbox();
+      if (this._data.completed) {
+        this._handleCheck(false);
+      } else {
+        this._handleCheck(true);
+      }
+      this._toggleCheckbox();      
     });
   }
   _toggleCheckbox() {
-    if (this._data.completed) {
-      this._counter.updateCompleted(false);
-    } else {
-      this._counter.updateCompleted(true);
-    }
     this._data.completed = !this._data.completed;
   }
 }
